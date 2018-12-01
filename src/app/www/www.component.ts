@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Result } from './Result';
+import { Offer } from './Offer';
 
 @Component({
   selector: 'app-www',
@@ -9,7 +10,7 @@ import { Result } from './Result';
 })
 export class WwwComponent implements OnInit {
 
-  base_url = 'http://localhost:8000/api';
+  api_url = 'http://localhost:8000/api';
   prices: number[] = [10, 15, 20, 25, 30, 35]
   orders: string[] = ['Price asc', 'Price desc', 'Name asc', 'Name desc']
   result: Result;
@@ -26,33 +27,12 @@ export class WwwComponent implements OnInit {
     }
 
     this.init();
+    this.logAnalytics('test', {test: 'ciao'});
 
-  }
-
-  logAnalytics(action: string, data: any) {
-    
-    let url_log_analytics: string = `${this.base_url}/log_analytics`;
-    let url_token_security: string = `${this.base_url}/token_security`;
-    
-    // this.http.get<Result>(url_token_security).subscribe((data: any) => {
-
-    //   let csrftoken = data['token'];
-    //   let headers = new HttpHeaders().set('X-CSRFToken', csrftoken)
-    //   this.http.post(url_log_analytics, {}, {headers: headers})
-    //     .subscribe((data: any) => {
-
-    //   });
-    // });
-
-    this.http.post(url_log_analytics, {action, data})
-      .subscribe((data: any) => {
-        
-    });
-    
   }
 
   init() {
-    let url: string = `${this.base_url}/save_offers`;
+    let url: string = `${this.api_url}/save_offers`;
     this.http.get<Result>(url).subscribe((data: any) => {
       if(data['result']) {
         this.getAllProducts();
@@ -60,25 +40,55 @@ export class WwwComponent implements OnInit {
     });
   }
 
+  /**
+   * http POST
+   * this function save user action and data in the database table 'analytics' to understand user's behaviours.
+   * see http://localhost:8000/admin/api/analytics
+   * @param action the action name of the user (buy, sort, minprice, maxprice)
+   * @param data the json data with the action data
+   */
+  logAnalytics(action: string, data: any) {
+    this.http.post(`${this.api_url}/log_analytics`, {action, data}).subscribe((data: any) => {
+      console.log(data);
+    });
+  }
+
+  /**
+   * http GET
+   * retrieve all product unfiltered and unsorted
+   */
   getAllProducts() {
-    let url: string = `${this.base_url}/get_all_offers`;
+    let url: string = `${this.api_url}/get_all_offers`;
     this.http.get<Result>(url).subscribe((data: Result) => this.result = { ...data });
   }
 
+  /**
+   * called by angular ui, set the min price field
+   * execute the filter and log minprice action
+   * @param idx the selected option index
+   */
   onMinPriceSelected(idx: number) {
     this.minPrice = idx < 0 ? 0 : this.prices[idx];
-    console.log(idx, this.minPrice, this.maxPrice);
     this.filterProducts();
     this.logAnalytics('minprice', {minPrice: this.minPrice});
   }
 
+  /**
+   * called by angular ui, set the min price field
+   * execute the filter and log maxprice action
+   * @param idx the selected option index
+   */
   onMaxPriceSelected (idx: number) {
     this.maxPrice = idx < 0 ? 999 : this.prices[idx];
-    console.log(idx, this.minPrice, this.maxPrice);
     this.filterProducts();
     this.logAnalytics('maxprice', {maxPrice: this.maxPrice});
   }
 
+  /**
+   * called by angular ui, set sort parameters
+   * execute the filter and log maxprice action
+   * @param idx the selected option index
+   */
   onSort (idx: number) {
     let sort: string;
     let order: string;
@@ -108,20 +118,24 @@ export class WwwComponent implements OnInit {
     }
   }
 
-  onBuy(link) {
-    this.logAnalytics('buy', {url: link})
+  /**
+   * Output button click callback from the offer component 
+   * @param offer the offer object selected
+   */
+  onBuy(offer: Offer) {
+    this.logAnalytics('buy', {offer});
   } 
 
   filterAndSortProducts(sort: string, order: string) {
 
-    let url: string = `${this.base_url}/filter_and_sort_products/${this.minPrice}/${this.maxPrice}/${sort}/${order}`;
+    let url: string = `${this.api_url}/filter_and_sort_products/${this.minPrice}/${this.maxPrice}/${sort}/${order}`;
     this.http.get<Result>(url).subscribe((data: Result) => this.result = { ...data });
 
   }
 
   filterProducts() {
 
-    let url: string = `${this.base_url}/filter_products/${this.minPrice}/${this.maxPrice}`;
+    let url: string = `${this.api_url}/filter_products/${this.minPrice}/${this.maxPrice}`;
     this.http.get<Result>(url).subscribe((data: Result) => this.result = { ...data });
 
   }

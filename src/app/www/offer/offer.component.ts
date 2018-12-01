@@ -10,15 +10,16 @@ export class OfferComponent implements OnInit {
 
   @Input() offer: Offer;
   @Input() url: string;
-  @Output() buy = new EventEmitter<string>();
+  @Output() buy = new EventEmitter<Offer>();
 
   constructor() { }
 
   ngOnInit() {
+    this.offer.menulink
   }
 
-  onClickBuy = (link) => {
-    this.buy.emit(link);
-    location.href = this.url + link;
+  onClickBuy = () => {
+    this.buy.emit(this.offer);
+    location.href = this.url + this.offer.menulink;
   }
 }
