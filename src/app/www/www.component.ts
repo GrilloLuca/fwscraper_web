@@ -69,7 +69,7 @@ export class WwwComponent implements OnInit {
    */
   onMinPriceSelected(idx: number) {
     this.minPrice = idx < 0 ? 0 : this.prices[idx];
-    this.filterProducts();
+    this.filterPriceProducts();
     this.logAnalytics('minprice', {minPrice: this.minPrice});
   }
 
@@ -80,7 +80,7 @@ export class WwwComponent implements OnInit {
    */
   onMaxPriceSelected (idx: number) {
     this.maxPrice = idx < 0 ? 999 : this.prices[idx];
-    this.filterProducts();
+    this.filterPriceProducts();
     this.logAnalytics('maxprice', {maxPrice: this.maxPrice});
   }
 
@@ -126,6 +126,11 @@ export class WwwComponent implements OnInit {
     this.logAnalytics('buy', {offer});
   } 
 
+  /**
+   * call the filter api and update the dataset
+   * @param sort the model property name which you want to sort
+   * @param order sort order asc: ascending, desc: descending
+   */
   filterAndSortProducts(sort: string, order: string) {
 
     let url: string = `${this.api_url}/filter_and_sort_products/${this.minPrice}/${this.maxPrice}/${sort}/${order}`;
@@ -133,7 +138,10 @@ export class WwwComponent implements OnInit {
 
   }
 
-  filterProducts() {
+  /**
+   * apply minprice and maxprice filter and update the dataset
+   */
+  filterPriceProducts() {
 
     let url: string = `${this.api_url}/filter_products/${this.minPrice}/${this.maxPrice}`;
     this.http.get<Result>(url).subscribe((data: Result) => this.result = { ...data });
