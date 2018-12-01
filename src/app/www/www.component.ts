@@ -85,13 +85,19 @@ export class WwwComponent implements OnInit {
 
     switch(this.orders[idx]) {
       case 'Price asc':
-        sort = 'hilite'; order = 'asc';
+        sort = 'hilite'; 
+        order = 'asc';
+      break;
       case 'Price desc':
+        sort = 'hilite'; 
         order = 'desc';
       break;
       case 'Name asc':
-        sort = 'product'; order = 'asc';
+        sort = 'product'; 
+        order = 'asc';
+      break;
       case 'Name desc':
+        sort = 'product'; 
         order = 'desc';
       break;
     }
