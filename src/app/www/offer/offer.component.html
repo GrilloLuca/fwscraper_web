@@ -1,0 +1,14 @@
+<br/>
+<div class="card">
+    <div class="card-content">
+        <div class="content">
+            <p><b>{{ offer.product }} </b>
+              <span class="tag is-success">{{ offer.hilite }} €</span>
+            </p>
+
+            <span>{{ offer.description }}</span><br/>
+            <button class="button" (click)="onClickBuy(offer.menulink);">buy now</button>
+        </div>
+    </div>
+</div>
+

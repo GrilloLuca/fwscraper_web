@@ -1,0 +1,40 @@
+    
+<div class="columns">
+    <div class="column is-narrow">
+        <span class="tag">prices between</span>
+        <div class="select">
+            <select (change)="onMinPriceSelected($event.target.value)">
+                <option value="-1">min price</option>
+                <option *ngFor="let price of prices; let i = index" value="{{i}}">
+                    {{ price }} €
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="column is-narrow">  
+            <span class="tag">and</span>
+        <div class="select">
+            <select (change)="onMaxPriceSelected($event.target.value)">
+                <option value="-1">max price</option>
+                <option *ngFor="let price of prices; let i = index" value="{{i}}">{{ price }} €</option>
+            </select>
+        </div>
+    </div>
+    <div class="column is-narrow">
+        <span class="tag">sort</span>
+        <div class="select">
+            <select (change)="onSort($event.target.value)">
+                <option value="-1">sort</option>
+                <option *ngFor="let order of orders; let i = index" value="{{i}}">{{ order }}</option>
+            </select>
+        </div>
+    </div>
+</div> 
+
+<div *ngFor="let offer of result.offers">
+    <app-offer 
+        [offer]="offer" 
+        [url]="result.url" 
+        (buy)="onBuy($event)">
+    </app-offer>
+</div>
